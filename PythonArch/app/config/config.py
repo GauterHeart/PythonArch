@@ -19,7 +19,7 @@ class RunType(Enum):
 
 class RunProgram(Enum):
     HTTP = "http"
-    PARSER_V1 = "parser_v1"
+    RABBIT_TOKEN_CREATE_V1 = "rabbit_token_create_v1"
 
     def __str__(self) -> str:
         return self.value
@@ -56,7 +56,7 @@ class Setting(_Setting):
     RABBIT_PORT: int
     RABBIT_USER: str
     RABBIT_PASSWORD: str
-    RABBIT_QUEUE_DOWNLOAD: str
+    RABBIT_QUEUE_TOKEN_CREATE: str
 
     # Crypt
     CRYPT_KEY: str

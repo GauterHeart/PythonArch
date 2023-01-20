@@ -1,6 +1,0 @@
-from typing import Any
-
-
-class BaseRabbitException(Exception):
-    status_code: Any = ...
-    detail: Any = ...

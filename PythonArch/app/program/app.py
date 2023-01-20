@@ -1,8 +1,10 @@
 from cryptography.fernet import Fernet
 
 from app.config import get_settings
+from app.controller.v1.handler import TokenHandlerV1
 from app.core.auth import AuthService
 from app.core.initer import IniterService
+from app.core.rabbit.status import RabbitStatusHandler
 from app.crud import FactoryCrud
 from app.pkg.database import Postgresql, Redis, SyncPostgresql
 from app.pkg.rabbit import RabbitPublisher
@@ -42,6 +44,8 @@ class BaseApp:
         dsn=f"amqp://{_config.RABBIT_USER}:{_config.RABBIT_PASSWORD}@"
         + f"{_config.RABBIT_HOST}:{_config.RABBIT_PORT}"
     )
+    _token_handler_v1 = TokenHandlerV1(crud_p=_crud.init_postgres_crud())
+    _rabbit_status_handler = RabbitStatusHandler()
 
     _auth_service = AuthService(
         crud_p=_crud.init_postgres_crud(),

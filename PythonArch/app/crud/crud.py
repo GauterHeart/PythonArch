@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from app.crud.postgresql import ClientCRUD
+from app.crud.postgresql import ClientCRUD, TokenCRUD
 from app.crud.redis import AuthRedisCRUD
 from app.pkg.database import Postgresql, Redis
 
@@ -8,6 +8,7 @@ from app.pkg.database import Postgresql, Redis
 @dataclass(frozen=True)
 class PostgresCRUD:
     client: ClientCRUD
+    token: TokenCRUD
 
 
 @dataclass(frozen=True)
@@ -23,6 +24,7 @@ class FactoryCrud:
     def init_postgres_crud(self) -> PostgresCRUD:
         return PostgresCRUD(
             client=ClientCRUD(cursor=self.__postgres_cursor),
+            token=TokenCRUD(cursor=self.__postgres_cursor),
         )
 
     def init_redis_crud(self) -> RedisCRUD:

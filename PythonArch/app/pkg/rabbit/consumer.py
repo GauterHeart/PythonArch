@@ -7,7 +7,8 @@ from aio_pika.abc import AbstractMessage, AbstractRobustConnection
 from loguru import logger
 from pydantic import BaseModel, parse_obj_as
 
-from .exception import BaseRabbitException, RabbitModelValidatorException
+from ..exception import BaseExceptionHandler
+from .exception import RabbitModelValidatorException
 
 
 class RabbitStatusHandlerABC(ABC):
@@ -17,13 +18,13 @@ class RabbitStatusHandlerABC(ABC):
 
     @abstractmethod
     async def func_400(
-        self, msg: AbstractMessage, exception: BaseRabbitException
+        self, msg: AbstractMessage, exception: BaseExceptionHandler
     ) -> None:
         ...
 
     @abstractmethod
     async def func_500(
-        self, msg: AbstractMessage, exception: BaseRabbitException
+        self, msg: AbstractMessage, exception: BaseExceptionHandler
     ) -> None:
         ...
 
@@ -75,12 +76,10 @@ class RabbitConsumer:
                 async for message in queue_iter:
                     async with message.process() as msg:
                         try:
-                            await func(
-                                spell=self.__model_validator(msg=msg, model=model)
-                            )
+                            await func(self.__model_validator(msg=msg, model=model))
                             await self.__status_handler.func_200(msg=msg)
                             logger.success("Successfully")
-                        except BaseRabbitException as e:
+                        except BaseExceptionHandler as e:
                             if e.status_code >= 500:
                                 logger.critical(
                                     f"Status-Code: {e.status_code}, Detail: {e.detail}"

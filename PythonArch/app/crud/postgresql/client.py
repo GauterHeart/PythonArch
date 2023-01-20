@@ -2,9 +2,10 @@ from typing import Optional
 
 from app.model import ClientModel
 from app.pkg.database import Postgresql
+from app.pkg.database.crud import CrudABC
 
 
-class ClientCRUD:
+class ClientCRUD(CrudABC):
     def __init__(self, cursor: Postgresql) -> None:
         self.__cursor = cursor
 
