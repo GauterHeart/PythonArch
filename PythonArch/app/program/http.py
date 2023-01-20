@@ -1,4 +1,3 @@
-from typing import Any
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -62,10 +61,10 @@ class HttpApp(BaseApp, AppABC):
 
     def run(self) -> None:
         uvicorn.run(
-            'main:app',
+            "main:app",
             host=self._config.HOST,
             port=self._config.PORT,
             workers=self._config.WORKER,
             factory=True,
-            reload=self._config.RELOAD
+            reload=self._config.RELOAD,
         )

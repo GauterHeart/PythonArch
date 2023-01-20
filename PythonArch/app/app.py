@@ -1,6 +1,7 @@
 from typing import List, Optional, Type
 
 from app.config.config import get_settings
+from app.pkg.arch.exception import ProgramException
 from app.pkg.arch.program import AppABC
 from app.program import HttpApp, RabbitTokenCreateV1App
 
@@ -22,7 +23,7 @@ class App:
     def run(self) -> AppABC:
         app = self.__app()
         if app is None:
-            raise
+            raise ProgramException()
 
         return app
 
