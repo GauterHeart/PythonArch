@@ -19,10 +19,12 @@ class App:
 
         return None
 
-    def run(self) -> None:
+    def run(self) -> AppABC:
         app = self.__app()
-        if app is not None:
-            app.run()
+        if app is None:
+            raise
+
+        return app
 
 
-app = App()
+app = App().run()

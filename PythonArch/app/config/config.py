@@ -36,6 +36,7 @@ class Setting(_Setting):
     HOST: str
     PORT: int
     WORKER: int
+    RELOAD: bool
 
     # Postgres
     POSTGRES_HOST: str
