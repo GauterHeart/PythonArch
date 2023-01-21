@@ -16,7 +16,7 @@ class TokenHttpController(HttpControllerABC):
         self.router.add_api_route(path="/", endpoint=self.__get, methods=["Get"])
 
     async def __get(self, token: str = Query(max_length=64)) -> None:
-        print(token)
+        ...
 
     async def __create(self, spell: token.TokenCreateSchema) -> None:
         ...
