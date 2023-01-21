@@ -6,7 +6,7 @@ from starlette.middleware.cors import CORSMiddleware
 from app.controller.v1.http import HttpControllerV1
 from app.core.initer import IniterService
 from app.pkg.arch import AppABC
-from app.pkg.database import Redis
+from app.pkg.database.redis import RedisAsync, RedisSSL
 from app.pkg.exception.base import BaseExceptionHandler
 from app.program.app import BaseApp
 
@@ -22,13 +22,24 @@ class HttpApp(BaseApp, AppABC):
         self.__reg_middleware()
 
     def __redis_connection(self) -> None:
-        IniterService.cursor_r = Redis(
-            host=self._config.REDIS_HOST,
-            port=self._config.REDIS_PORT,
-            user=self._config.REDIS_USER,
-            password=self._config.REDIS_PASSWORD,
-            db=self._config.REDIS_DB,
+        IniterService.cursor_r = (
+            RedisSSL(
+                host=self._config.REDIS_HOST,
+                port=self._config.REDIS_PORT,
+                user=self._config.REDIS_USER,
+                password=self._config.REDIS_PASSWORD,
+                db=self._config.REDIS_DB,
+            )
+            if self._config.REDIS_SSL is True
+            else RedisAsync(
+                host=self._config.REDIS_HOST,
+                port=self._config.REDIS_PORT,
+                user=self._config.REDIS_USER,
+                password=self._config.REDIS_PASSWORD,
+                db=self._config.REDIS_DB,
+            )
         )
+
         IniterService.health_connection_redis()
 
     def __init_controller_v1(self) -> HttpControllerV1:

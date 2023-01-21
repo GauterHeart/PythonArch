@@ -6,7 +6,8 @@ from app.core.auth import AuthService
 from app.core.initer import IniterService
 from app.core.rabbit.status import RabbitStatusHandler
 from app.crud import FactoryCrud
-from app.pkg.database import Postgresql, Redis, SyncPostgresql
+from app.pkg.database import Postgresql, SyncPostgresql
+from app.pkg.database.redis import RedisAsync, RedisSSL
 from app.pkg.rabbit import RabbitPublisher
 
 
@@ -32,7 +33,15 @@ class BaseApp:
             password=_config.POSTGRES_PASSWORD,
             user=_config.POSTGRES_USER,
         ),
-        redis_cursor=Redis(
+        redis_cursor=RedisSSL(
+            host=_config.REDIS_HOST,
+            port=_config.REDIS_PORT,
+            user=_config.REDIS_USER,
+            password=_config.REDIS_PASSWORD,
+            db=_config.REDIS_DB,
+        )
+        if _config.REDIS_SSL is True
+        else RedisAsync(
             host=_config.REDIS_HOST,
             port=_config.REDIS_PORT,
             user=_config.REDIS_USER,

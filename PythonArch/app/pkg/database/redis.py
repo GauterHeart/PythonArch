@@ -1,13 +1,40 @@
+from abc import ABC, abstractmethod
 from contextlib import asynccontextmanager
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
 import aioredis
 from pydantic import SecretStr
 
-__all__ = ["Redis"]
+__all__ = ["Redis", "RedisAsync", "RedisSSL"]
 
 
-class Redis:
+class Redis(ABC):
+    @abstractmethod
+    async def set(self, name: str, value: str, expire: Optional[int] = None) -> None:
+        ...
+
+    @abstractmethod
+    async def get(self, name: str) -> str:
+        ...
+
+    @abstractmethod
+    async def delete(self, name: str) -> None:
+        ...
+
+    @abstractmethod
+    async def hset(self, name: str, key: str, value: str) -> None:
+        ...
+
+    @abstractmethod
+    async def hget(self, name: str, key: str) -> str:
+        ...
+
+    @abstractmethod
+    async def hgetall(self, name: str) -> Dict[str, str]:
+        ...
+
+
+class RedisAsync(Redis):
 
     __connector: Optional[aioredis.Redis] = None
 
@@ -41,27 +68,77 @@ class Redis:
             async with redis.client() as conn:
                 await conn.set(name=name, value=value, ex=expire)
 
-    async def delete(self, name: str) -> None:
-        async with self.__create_connector() as redis:
-            async with redis.client() as conn:
-                await conn.delete(name)
-
     async def get(self, name: str) -> str:
         async with self.__create_connector() as redis:
             async with redis.client() as conn:
                 return await conn.get(name=name)
 
-    async def hgetall(self, name: str) -> dict:
+    async def delete(self, name: str) -> None:
         async with self.__create_connector() as redis:
             async with redis.client() as conn:
-                return await conn.hgetall(name=name)
+                await conn.delete(name)
+
+    async def hset(self, name: str, key: str, value: str) -> None:
+        async with self.__create_connector() as redis:
+            async with redis.client() as conn:
+                return await conn.hset(name=name, key=key, value=value)
 
     async def hget(self, name: str, key: str) -> str:
         async with self.__create_connector() as redis:
             async with redis.client() as conn:
                 return await conn.hget(name=name, key=key)
 
-    async def hset(self, name: str, key: str, value: str) -> None:
+    async def hgetall(self, name: str) -> Dict[str, str]:
         async with self.__create_connector() as redis:
             async with redis.client() as conn:
-                return await conn.hset(name=name, key=key, value=value)
+                return await conn.hgetall(name=name)
+
+
+class RedisSSL(Redis):
+    __connection: Optional[aioredis.StrictRedis] = None
+
+    def __init__(
+        self, host: str, port: int, user: str, password: SecretStr, db: str
+    ) -> None:
+        self.__host = host
+        self.__port = port
+        self.__user = user
+        self.__password = password
+        self.__db = db
+        self.__connection = self.__make_connection()
+
+    def __make_connection(self) -> aioredis.StrictRedis:
+        if self.__connection is None:
+            return aioredis.StrictRedis(
+                host=self.__host,
+                port=self.__port,
+                username=self.__user,
+                password=self.__password.get_secret_value(),
+                db=self.__db,
+                ssl=True,
+            )
+        return self.__connection
+
+    async def set(self, name: str, value: str, expire: Optional[int] = None) -> None:
+        redis = self.__make_connection()
+        await redis.set(name=name, value=value, ex=expire)
+
+    async def get(self, name: str) -> str:
+        redis = self.__make_connection()
+        return await redis.get(name)
+
+    async def delete(self, name: str) -> None:
+        redis = self.__make_connection()
+        await redis.delete(name)
+
+    async def hset(self, name: str, key: str, value: str) -> None:
+        redis = self.__make_connection()
+        return await redis.hset(name=name, key=key, value=value)
+
+    async def hget(self, name: str, key: str) -> str:
+        redis = self.__make_connection()
+        return await redis.hget(name=name, key=key)
+
+    async def hgetall(self, name: str) -> Dict[str, str]:
+        redis = self.__make_connection()
+        return await redis.hgetall(name=name)

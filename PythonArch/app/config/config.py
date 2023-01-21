@@ -51,6 +51,7 @@ class Setting(_Setting):
     REDIS_DB: str
     REDIS_USER: str
     REDIS_PASSWORD: SecretStr
+    REDIS_SSL: bool
 
     # Rabbit
     RABBIT_HOST: str
