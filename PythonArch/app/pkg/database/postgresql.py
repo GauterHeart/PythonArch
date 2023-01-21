@@ -2,10 +2,13 @@ from contextlib import asynccontextmanager
 from typing import Any, AsyncGenerator, List
 
 import asyncpg
+from pydantic import SecretStr
 
 
 class Postgresql:
-    def __init__(self, host: str, port: int, user: str, password: str, db: str) -> None:
+    def __init__(
+        self, host: str, port: int, user: str, password: SecretStr, db: str
+    ) -> None:
         self.host = host
         self.port = port
         self.user = user
@@ -21,7 +24,7 @@ class Postgresql:
                 database=self.db,
                 user=self.user,
                 port=self.port,
-                password=self.password,
+                password=self.password.get_secret_value(),
                 host=self.host,
             )
 

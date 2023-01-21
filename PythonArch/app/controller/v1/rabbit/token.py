@@ -1,3 +1,5 @@
+from pydantic import SecretStr
+
 from app.controller.v1.handler import TokenHandlerV1
 from app.controller.v1.schema import token
 from app.core.rabbit import RabbitStatusHandler
@@ -9,7 +11,7 @@ class TokenCreateV1RabbitController(RabbitConsumer):
         self,
         queue_name: str,
         username: str,
-        password: str,
+        password: SecretStr,
         host: str,
         port: int,
         handler: TokenHandlerV1,

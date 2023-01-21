@@ -4,7 +4,7 @@ from functools import lru_cache
 from typing import Optional
 
 from dotenv import find_dotenv
-from pydantic import BaseSettings
+from pydantic import BaseSettings, SecretStr
 
 __all__ = ["get_settings"]
 
@@ -43,20 +43,20 @@ class Setting(_Setting):
     POSTGRES_PORT: int
     POSTGRES_DB: str
     POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
+    POSTGRES_PASSWORD: SecretStr
 
     # Redis
     REDIS_HOST: str
     REDIS_PORT: int
     REDIS_DB: str
     REDIS_USER: str
-    REDIS_PASSWORD: str
+    REDIS_PASSWORD: SecretStr
 
     # Rabbit
     RABBIT_HOST: str
     RABBIT_PORT: int
     RABBIT_USER: str
-    RABBIT_PASSWORD: str
+    RABBIT_PASSWORD: SecretStr
     RABBIT_QUEUE_TOKEN_CREATE: str
 
     # Crypt

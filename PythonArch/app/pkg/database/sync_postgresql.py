@@ -3,10 +3,13 @@ from typing import Generator, List, Optional
 
 import psycopg2.extras
 from psycopg2 import pool
+from pydantic import SecretStr
 
 
 class SyncPostgresql:
-    def __init__(self, host: str, port: int, user: str, password: str, db: str) -> None:
+    def __init__(
+        self, host: str, port: int, user: str, password: SecretStr, db: str
+    ) -> None:
         self.__host = host
         self.__port = port
         self.__user = user
@@ -21,7 +24,7 @@ class SyncPostgresql:
                 minconn=1,
                 maxconn=20,
                 user=self.__user,
-                password=self.__password,
+                password=self.__password.get_secret_value(),
                 host=self.__host,
                 port=self.__port,
                 database=self.__db,

@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from typing import Any, Optional
 
 import aioredis
+from pydantic import SecretStr
 
 __all__ = ["Redis"]
 
@@ -10,7 +11,9 @@ class Redis:
 
     __connector: Optional[aioredis.Redis] = None
 
-    def __init__(self, host: str, port: int, user: str, password: str, db: str) -> None:
+    def __init__(
+        self, host: str, port: int, user: str, password: SecretStr, db: str
+    ) -> None:
         self.__host = host
         self.__port = port
         self.__user = user
@@ -22,7 +25,7 @@ class Redis:
 
     def __create_dsn(self) -> str:
         return (
-            f"redis://{self.__user}:{self.__password}"
+            f"redis://{self.__user}:{self.__password.get_secret_value()}"
             + f"@{self.__host}:{self.__port}/{self.__db}"
         )
 

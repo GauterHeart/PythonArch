@@ -6,7 +6,7 @@ import aio_pika
 import ujson
 from aio_pika.abc import AbstractMessage, AbstractRobustConnection
 from loguru import logger
-from pydantic import BaseModel, parse_obj_as
+from pydantic import BaseModel, SecretStr, parse_obj_as
 from pydantic.main import ModelMetaclass
 
 from ..exception import BaseExceptionHandler
@@ -43,7 +43,7 @@ class RabbitConsumer:
         self,
         queue_name: str,
         username: str,
-        password: str,
+        password: SecretStr,
         host: str,
         port: int,
         status_handler: RabbitStatusHandlerABC,
@@ -57,7 +57,8 @@ class RabbitConsumer:
 
     def __create_dsn(self) -> str:
         return (
-            f"amqp://{self.__username}:{self.__password}@{self.__host}:{self.__port}/"
+            f"amqp://{self.__username}:{self.__password.get_secret_value()}@"
+            + f"{self.__host}:{self.__port}/"
         )
 
     def __model_validator(
