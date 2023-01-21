@@ -1,14 +1,20 @@
+import inspect
 from abc import ABC, abstractmethod
-from typing import Any, Callable
+from typing import Callable, Type
 
 import aio_pika
 import ujson
 from aio_pika.abc import AbstractMessage, AbstractRobustConnection
 from loguru import logger
 from pydantic import BaseModel, parse_obj_as
+from pydantic.main import ModelMetaclass
 
 from ..exception import BaseExceptionHandler
-from .exception import RabbitModelValidatorException
+from .exception import (
+    RabbitInvalidHandlerFunctionException,
+    RabbitInvalidModelTypeException,
+    RabbitModelValidatorException,
+)
 
 
 class RabbitStatusHandlerABC(ABC):
@@ -54,7 +60,9 @@ class RabbitConsumer:
             f"amqp://{self.__username}:{self.__password}@{self.__host}:{self.__port}/"
         )
 
-    def __model_validator(self, msg: AbstractMessage, model: Any) -> BaseModel:
+    def __model_validator(
+        self, msg: AbstractMessage, model: Type[BaseModel]
+    ) -> BaseModel:
         try:
             effect = parse_obj_as(model, ujson.loads(msg.body.decode("utf-8")))
             logger.info(f"Message: {effect}")
@@ -63,7 +71,13 @@ class RabbitConsumer:
         except Exception:
             raise RabbitModelValidatorException()
 
-    async def _broker(self, func: Callable, model: Any) -> None:
+    async def _broker(self, func: Callable, model: Type[BaseModel]) -> None:
+        if len(inspect.signature(func).parameters) != 1:
+            raise RabbitInvalidHandlerFunctionException()
+
+        if not isinstance(model, ModelMetaclass):
+            raise RabbitInvalidModelTypeException()
+
         self._connection = await aio_pika.connect_robust(url=self.__create_dsn())
         async with self._connection:
 
