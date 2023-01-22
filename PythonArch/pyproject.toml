@@ -32,8 +32,9 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.mypy]
+python_version = "3.10"
 disallow_untyped_defs = true
-exclude = "venv|tests"
+exclude = "./venv/"
 ignore_missing_imports = true
 
 [tool.isort]

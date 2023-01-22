@@ -68,7 +68,6 @@ class RabbitConsumer:
             effect = parse_obj_as(model, ujson.loads(msg.body.decode("utf-8")))
             logger.info(f"Message: {effect}")
             return effect
-
         except Exception:
             raise RabbitModelValidatorException()
 
@@ -80,13 +79,12 @@ class RabbitConsumer:
             raise RabbitInvalidModelTypeException()
 
         self._connection = await aio_pika.connect_robust(url=self.__create_dsn())
-        async with self._connection:
 
+        async with self._connection:
             channel = await self._connection.channel()
             await channel.set_qos(prefetch_count=10)
             queue = await channel.declare_queue(self.__queue_name, auto_delete=False)
             logger.success(f"START: {self.__queue_name}")
-
             async with queue.iterator() as queue_iter:
                 async for message in queue_iter:
                     async with message.process() as msg:
