@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from contextlib import asynccontextmanager
-from typing import Any, Dict, Optional
+from typing import AsyncGenerator, Dict, Optional
 
 import aioredis
 from pydantic import SecretStr
@@ -57,7 +57,7 @@ class RedisAsync(Redis):
         )
 
     @asynccontextmanager
-    async def __create_connector(self) -> Any:
+    async def __create_connector(self) -> AsyncGenerator[aioredis.Redis, None]:
         if self.__connector is None:
             self.__connector = aioredis.Redis(connection_pool=self.__pool)
 
