@@ -29,6 +29,11 @@ def parse_cli_args() -> argparse.Namespace:
         help="Rollback one migration",
     )
     parser.add_argument(
+        "--rollback-last",
+        action="store_true",
+        help="Rollback one migration",
+    )
+    parser.add_argument(
         "--reload",
         action="store_true",
         help="Rollback all migration and applying again",
@@ -70,6 +75,15 @@ def _rollback_one(backend: Any, migrations: Any) -> None:
         backend.rollback_one(effect[int(migration) - 1])
 
 
+def _rollback_last(backend: Any, migrations: Any) -> None:
+    """Rollback last migration."""
+    with backend.lock():
+        migrations = backend.to_rollback(migrations)
+        for migration in migrations:
+            backend.rollback_one(migration)
+            break
+
+
 def _reload(backend: Any, migrations: Any) -> None:
     """Rollback all and apply all migrations."""
     with backend.lock():
@@ -91,6 +105,9 @@ def main() -> None:
 
     elif args.rollback_one:
         _rollback_one(backend=backend, migrations=migration)
+
+    elif args.rollback_last:
+        _rollback_last(backend=backend, migrations=migration)
 
     elif args.reload:
         _reload(backend=backend, migrations=migration)
