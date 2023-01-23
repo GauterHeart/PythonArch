@@ -35,7 +35,6 @@ class Redis(ABC):
 
 
 class RedisAsync(Redis):
-
     __connector: Optional[aioredis.Redis] = None
 
     def __init__(

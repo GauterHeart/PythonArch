@@ -1,14 +1,45 @@
-lint:
-	flake8 app
-	mypy app
+# enumeration of * .py files storage or folders is required.
+files_to_fmt 	?= app test migration main.py migrate.py
+files_to_check 	?= app test migration main.py
 
-format:
-	black app
-	black main.py
-	black migration
-	isort app
-	isort main.py
 
-prepare:
-	make lint
-	make format
+## Format all
+fmt: format
+format: remove_imports isort black docformatter
+
+
+## Check code quality
+lint: check
+check: flake8 black_check docformatter_check safety bandit
+
+## Remove unused imports
+remove_imports:
+	autoflake -ir --remove-unused-variables \
+		--ignore-init-module-imports \
+		--remove-all-unused-imports \
+		${files_to_fmt}
+
+
+## Sort imports
+isort:
+	isort ${files_to_fmt}
+
+
+## Format code
+black:
+	black ${files_to_fmt}
+
+
+## Format docstring PEP 257
+docformatter:
+	docformatter -ir ${files_to_fmt}
+
+
+## Check pep8
+flake8:
+	flake8 ${files_to_check}
+
+
+## Check typing
+mypy:
+	mypy ${files_to_check}

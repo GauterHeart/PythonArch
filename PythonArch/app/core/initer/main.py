@@ -11,7 +11,6 @@ from .exception import (
 
 
 class IniterService:
-
     cursor_p: SyncPostgresql
     cursor_r: Redis
 

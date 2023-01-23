@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 
 class RabbitPublisher:
-
     __connection_pool: Pool
     __channel_pool: Pool
 

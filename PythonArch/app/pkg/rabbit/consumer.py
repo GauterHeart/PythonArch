@@ -36,7 +36,6 @@ class RabbitStatusHandlerABC(ABC):
 
 
 class RabbitConsumer:
-
     _connection: AbstractRobustConnection
 
     def __init__(

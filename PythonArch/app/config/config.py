@@ -44,6 +44,7 @@ class Setting(_Setting):
     POSTGRES_DB: str
     POSTGRES_USER: str
     POSTGRES_PASSWORD: SecretStr
+    POSTGRES_DSN: str
 
     # Redis
     REDIS_HOST: str

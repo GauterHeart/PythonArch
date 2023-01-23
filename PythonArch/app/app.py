@@ -7,7 +7,6 @@ from app.program import HttpApp, RabbitTokenCreateV1App
 
 
 class App:
-
     _config = get_settings()
 
     def __program(self) -> List[Type[AppABC]]:
