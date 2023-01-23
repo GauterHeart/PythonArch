@@ -57,39 +57,39 @@ class RedisAsync(Redis):
         )
 
     @asynccontextmanager
-    async def __create_connector(self) -> AsyncGenerator[aioredis.Redis, None]:
+    async def _create_connector(self) -> AsyncGenerator[aioredis.Redis, None]:
         if self.__connector is None:
             self.__connector = aioredis.Redis(connection_pool=self.__pool)
 
         yield self.__connector
 
     async def set(self, name: str, value: str, expire: Optional[int] = None) -> None:
-        async with self.__create_connector() as redis:
+        async with self._create_connector() as redis:
             async with redis.client() as conn:
                 await conn.set(name=name, value=value, ex=expire)
 
     async def get(self, name: str) -> str:
-        async with self.__create_connector() as redis:
+        async with self._create_connector() as redis:
             async with redis.client() as conn:
                 return await conn.get(name=name)
 
     async def delete(self, name: str) -> None:
-        async with self.__create_connector() as redis:
+        async with self._create_connector() as redis:
             async with redis.client() as conn:
                 await conn.delete(name)
 
     async def hset(self, name: str, key: str, value: str) -> None:
-        async with self.__create_connector() as redis:
+        async with self._create_connector() as redis:
             async with redis.client() as conn:
                 return await conn.hset(name=name, key=key, value=value)
 
     async def hget(self, name: str, key: str) -> str:
-        async with self.__create_connector() as redis:
+        async with self._create_connector() as redis:
             async with redis.client() as conn:
                 return await conn.hget(name=name, key=key)
 
     async def hgetall(self, name: str) -> Dict[str, str]:
-        async with self.__create_connector() as redis:
+        async with self._create_connector() as redis:
             async with redis.client() as conn:
                 return await conn.hgetall(name=name)
 
