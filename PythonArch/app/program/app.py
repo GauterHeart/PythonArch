@@ -12,6 +12,8 @@ from app.pkg.rabbit import RabbitPublisher
 
 
 class BaseApp:
+    """Base init object."""
+
     _config = get_settings()
 
     _fernet = Fernet(_config.CRYPT_KEY)

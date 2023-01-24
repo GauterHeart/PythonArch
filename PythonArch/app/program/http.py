@@ -12,6 +12,8 @@ from app.program.app import BaseApp
 
 
 class HttpApp(BaseApp, AppABC):
+    """Http server object."""
+
     name = "http"
 
     __app = FastAPI()

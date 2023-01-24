@@ -6,6 +6,8 @@ from app.program.app import BaseApp
 
 
 class RabbitTokenCreateV1App(BaseApp, AppABC):
+    """Rabbit consumer object."""
+
     name = "rabbit_token_create_v1"
 
     def __init_rabbit(self) -> TokenCreateV1RabbitController:
