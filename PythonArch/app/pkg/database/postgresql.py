@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from contextlib import asynccontextmanager
-from typing import Any, AsyncGenerator, List
+from typing import Any, AsyncGenerator, List, Optional
 
 import asyncpg
 from pydantic import SecretStr
@@ -21,6 +21,8 @@ class _Cursor:
 
 
 class Postgresql:
+    """Async postgresql driver."""
+
     def __init__(
         self, host: str, port: int, user: str, password: SecretStr, db: str
     ) -> None:
@@ -29,11 +31,10 @@ class Postgresql:
         self.__user = user
         self.__password = password
         self.__db = db
-        self.__pool: asyncpg.Pool | None = None
+        self.__pool: Optional[asyncpg.Pool] = None
 
     @asynccontextmanager
     async def _create_connector(self) -> AsyncGenerator[asyncpg.Pool, None]:
-
         if self.__pool is None:
             self.__pool = await asyncpg.create_pool(
                 database=self.__db,

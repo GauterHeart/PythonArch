@@ -7,6 +7,8 @@ from pydantic import SecretStr
 
 
 class SyncPostgresql:
+    """Sync postgresql driver."""
+
     def __init__(
         self, host: str, port: int, user: str, password: SecretStr, db: str
     ) -> None:
