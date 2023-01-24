@@ -1,5 +1,5 @@
 # enumeration of * .py files storage or folders is required.
-files_to_fmt 	?= app test migration main.py migrate.py
+files_to_fmt 	?= app test migration main.py
 files_to_check 	?= app test migration main.py
 
 
