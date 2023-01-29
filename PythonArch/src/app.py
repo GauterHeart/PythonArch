@@ -5,6 +5,8 @@ from src.pkg.arch.exception import ProgramException
 from src.pkg.arch.program import AppABC
 from src.program import HttpApp
 
+__all__ = ["app"]
+
 
 class App:
     _config = get_settings()
@@ -19,7 +21,7 @@ class App:
 
         return None
 
-    def run(self) -> AppABC:
+    def setup(self) -> AppABC:
         app = self.__app()
         if app is None:
             raise ProgramException()
@@ -27,4 +29,4 @@ class App:
         return app
 
 
-app = App().run()
+app = App().setup()

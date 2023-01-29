@@ -16,4 +16,8 @@ steps = [
          """,
         "drop table client",
     ),
+    step(
+        """create index idx_client_public_key on client(public_key)""",
+        "drop index idx_client_public_key",
+    ),
 ]
