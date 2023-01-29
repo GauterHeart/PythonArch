@@ -1,6 +1,6 @@
 # enumeration of * .py files storage or folders is required.
-files_to_fmt 	?= app test migration main.py
-files_to_check 	?= app test migration main.py
+files_to_fmt 	?= src test migration main.py
+files_to_check 	?= src test migration main.py
 
 
 ## Format all
@@ -10,7 +10,7 @@ format: remove_imports isort black docformatter
 
 ## Check code quality
 lint: check
-check: flake8 black_check docformatter_check safety bandit
+check: flake8 mypy
 
 ## Remove unused imports
 remove_imports:
