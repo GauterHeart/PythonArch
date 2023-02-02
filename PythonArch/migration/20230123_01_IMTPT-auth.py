@@ -1,4 +1,4 @@
-"""Base."""
+"""Auth."""
 
 from yoyo import step
 

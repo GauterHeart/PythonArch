@@ -45,7 +45,9 @@ class HttpApp(BaseApp, AppABC):
         IniterService.health_connection_redis()
 
     def __init_controller_v1(self) -> HttpControllerV1:
-        return HttpControllerV1(auth_service=self._auth_service)
+        return HttpControllerV1(
+            auth_service=self._auth_service, logger_handler=self._logger_handler
+        )
 
     @staticmethod
     @__app.exception_handler(BaseExceptionHandler)

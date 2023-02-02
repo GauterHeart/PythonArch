@@ -1,6 +1,7 @@
 from cryptography.fernet import Fernet
 
 from src.config import get_settings
+from src.controller.v1.handler import LoggerHandler
 from src.core.auth import AuthService
 from src.core.initer import IniterService
 from src.core.rabbit.status import RabbitStatusHandler
@@ -55,6 +56,7 @@ class BaseApp:
         + f"{_config.RABBIT_HOST}:{_config.RABBIT_PORT}"
     )
     _rabbit_status_handler = RabbitStatusHandler()
+    _logger_handler = LoggerHandler()
 
     _auth_service = AuthService(
         crud_p=_crud.init_postgres_crud(),
